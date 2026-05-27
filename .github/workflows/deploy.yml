@@ -17,6 +17,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN_1 }}
+          wranglerVersion: '3.99.0'
           command: deploy --env account1
 
   deploy-account2:
@@ -30,4 +31,5 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN_2 }}
+          wranglerVersion: '3.99.0'
           command: deploy --env account2
