@@ -4,11 +4,13 @@ compatibility_date = "2025-11-04"
 keep_vars = true
 
 [env.account1]
+account_id = "78adc043b2f7780b7f799f617bd9c316"
 kv_namespaces = [
   { binding = "KV", id = "5aae647cc84540558a9a91e164e9164f" }
 ]
 
 [env.account2]
+account_id = "8ce3fcda0233703971a6d5f9670460dd"
 kv_namespaces = [
   { binding = "KV", id = "4bc64ad943d8435db1b1f8091c2b2be6" }
 ]
