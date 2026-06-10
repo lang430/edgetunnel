@@ -2,7 +2,7 @@ name: Deploy to Cloudflare
 
 on:
   schedule:
-    - cron: "10 0 * * *"
+    - cron: "10 0 * * 0"
   push:
     branches: [main]
   workflow_dispatch:
@@ -34,17 +34,21 @@ jobs:
           cleanup() { rm -f .wrangler-secrets.env; }
           trap cleanup EXIT
 
-          npx --yes wrangler@4.81.1 delete --env "${WORKER_ENV}" --force || true
+          echo ">>> [${WORKER_ENV}] Deleting old worker..."
+          npx --yes wrangler@4.81.1 delete --env "${WORKER_ENV}" --force 2>&1 || echo ">>> [${WORKER_ENV}] No existing worker to delete or delete failed, continuing..."
 
           umask 077
           printf 'ADMIN=%s\n' "${ADMIN_SECRET}" > .wrangler-secrets.env
 
           deploy_args=(deploy --env "${WORKER_ENV}" --secrets-file .wrangler-secrets.env)
           if [ -n "${CUSTOM_DOMAIN}" ]; then
+            echo ">>> [${WORKER_ENV}] Using custom domain: ${CUSTOM_DOMAIN}"
             deploy_args+=(--domain "${CUSTOM_DOMAIN}")
           fi
 
-          npx --yes wrangler@4.81.1 "${deploy_args[@]}"
+          echo ">>> [${WORKER_ENV}] Deploying worker..."
+          npx --yes wrangler@4.81.1 "${deploy_args[@]}" 2>&1
+          echo ">>> [${WORKER_ENV}] Deployment completed."
 
   deploy-account2:
     name: Delete and deploy account2
@@ -68,14 +72,18 @@ jobs:
           cleanup() { rm -f .wrangler-secrets.env; }
           trap cleanup EXIT
 
-          npx --yes wrangler@4.81.1 delete --env "${WORKER_ENV}" --force || true
+          echo ">>> [${WORKER_ENV}] Deleting old worker..."
+          npx --yes wrangler@4.81.1 delete --env "${WORKER_ENV}" --force 2>&1 || echo ">>> [${WORKER_ENV}] No existing worker to delete or delete failed, continuing..."
 
           umask 077
           printf 'ADMIN=%s\n' "${ADMIN_SECRET}" > .wrangler-secrets.env
 
           deploy_args=(deploy --env "${WORKER_ENV}" --secrets-file .wrangler-secrets.env)
           if [ -n "${CUSTOM_DOMAIN}" ]; then
+            echo ">>> [${WORKER_ENV}] Using custom domain: ${CUSTOM_DOMAIN}"
             deploy_args+=(--domain "${CUSTOM_DOMAIN}")
           fi
 
-          npx --yes wrangler@4.81.1 "${deploy_args[@]}"
+          echo ">>> [${WORKER_ENV}] Deploying worker..."
+          npx --yes wrangler@4.81.1 "${deploy_args[@]}" 2>&1
+          echo ">>> [${WORKER_ENV}] Deployment completed."
